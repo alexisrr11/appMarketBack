@@ -38,24 +38,37 @@ export class ProductModel {
     return rows[0] ?? null;
   }
 
-  async update({ id, name, quantity, completed }) {
+  async updateFields({ id, name, quantity }) {
     const query = `
       UPDATE products
       SET name = $1,
           quantity = $2,
-          completed = $3,
           updated_at = NOW()
-      WHERE id = $4
+      WHERE id = $3
       RETURNING id, name, quantity, completed, created_by, created_at, updated_at
     `;
 
-    const values = [name, quantity, completed, id];
+    const values = [name, quantity, id];
     const { rows } = await this.db.query(query, values);
+    return rows[0] ?? null;
+  }
+
+  async markCompleted(id) {
+    const query = `
+      UPDATE products
+      SET completed = TRUE,
+          updated_at = NOW()
+      WHERE id = $1
+      RETURNING id, name, quantity, completed, created_by, created_at, updated_at
+    `;
+
+    const { rows } = await this.db.query(query, [id]);
     return rows[0] ?? null;
   }
 
   async delete(id) {
     const query = 'DELETE FROM products WHERE id = $1';
-    await this.db.query(query, [id]);
+    const result = await this.db.query(query, [id]);
+    return result.rowCount > 0;
   }
 }
