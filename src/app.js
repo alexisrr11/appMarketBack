@@ -1,4 +1,4 @@
-import { App } from "./server.js";
+import { App } from './server.js';
 
-const server = new App(3000);
+const server = new App();
 server.listen();
