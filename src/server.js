@@ -1,28 +1,29 @@
 import express from 'express';
+import dotenv from 'dotenv';
+import routes from './routes/index.js';
+
+dotenv.config();
 
 export class App {
-    constructor(PORT=3000){
-        this.app = express();
-        this.PORT = PORT;
+  constructor(port = process.env.PORT || 3000) {
+    this.app = express();
+    this.port = port;
 
-        //Ejecutar middlewares
-        this.routes();
-        this.middlewares();
-    }
+    this.middlewares();
+    this.routes();
+  }
 
-    middlewares(){
-        this.app.use(express.json());
-    };
+  middlewares() {
+    this.app.use(express.json());
+  }
 
-    routes(){
-        this.app.get(("/"), (req, res) => {
-            res.send("Hola Node!")
-        });
-    };
+  routes() {
+    this.app.use('/api', routes);
+  }
 
-    listen(){
-        this.app.listen(this.PORT, ()=> {
-            console.log(`Servidor corriendo en puerto: ${this.PORT}`)
-        });
-    };
+  listen() {
+    this.app.listen(this.port, () => {
+      console.log(`Servidor corriendo en puerto: ${this.port}`);
+    });
+  }
 }
